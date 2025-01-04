@@ -17,11 +17,27 @@ class TodoOperate {
     }
 
     // 更新事务列表
-    static async updateTodoById(id,{completed, description, lockTime}){
-        await pool.query(
-            'UPDATE cardInfo SET completed = ?, description = ?, lockTime = ? WHERE id = ?',
-            [completed, description, lockTime, id]
-        );
+    static async updateTodoById(id,{data}){
+        const { completed, description, lockTime } = data;
+        if (completed){
+            await pool.query(
+                'DELETE FROM cardInfo WHERE id = ?',
+                [id],
+            )
+        }else {
+           if (typeof description === 'string') {
+               await pool.query(
+                   'UPDATE cardInfo SET  description = ? WHERE id = ?',
+                   [description, id]
+               );
+           }
+           if (typeof lockTime === 'number') {
+               await pool.query(
+                   'UPDATE cardInfo SET  lockTime = ? WHERE id = ?',
+                   [lockTime, id]
+               );
+           }
+        }
     }
 
     static async getPositionById(id) {

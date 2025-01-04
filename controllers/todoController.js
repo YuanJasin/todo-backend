@@ -19,8 +19,6 @@ const getTodos = async (req,res) => {
 
 // 创建事务项
 const createTodo = async(req,res) => {
-    console.log('Headers:', req.headers); // 打印请求头
-    console.log('Body:', req.body); // 打印请求体
     try {
         let { completed, description, lockTime } = req.body;
         if (description.length > 0 && lockTime > 0) {
@@ -44,9 +42,9 @@ const createTodo = async(req,res) => {
 const updateTodo = async(req,res) => {
     try{
         const id = req.params.id;
-        const { completed, description, lockTime } = req.body;
-        await todoOperate.updateTodoById(id,{completed,description,lockTime});
-        res.status(201).json({success:true});
+        const data = req.body;
+        await todoOperate.updateTodoById(id,data);
+        res.status(201).json({success:true,code:200});
     }catch (error) {
         res.status(500).json({error: error,success: false});
     }
