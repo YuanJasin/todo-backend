@@ -40,18 +40,16 @@ class TodoOperate {
         }
     }
 
-    static async getPositionById(id) {
-        const [rows] = await pool.query('SELECT position FROM cardInfo WHERE id = ?', [id]);
-        return rows.length ? rows[0].position : null;
+    static async getItemById(id) {
+        const [rows] = await pool.query('SELECT description,locktime FROM cardInfo WHERE id = ?', [id]);
+        return rows;
     }
 
-    static async updatePositions(updates) {
-        const queries = updates.map(
-            ({ id, position }) =>
-                pool.query('UPDATE cardInfo SET position = ? WHERE id = ?', [position, id])
-        );
-        await Promise.all(queries);
+    static async updateSchedule(description,lockTime,id) {
+        await pool.query('UPDATE cardInfo SET description = ?, lockTime = ? WHERE id = ?',
+            [description, lockTime, id]);
     }
+
 }
 
 module.exports = TodoOperate;

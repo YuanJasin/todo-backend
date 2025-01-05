@@ -5,11 +5,7 @@ const getTodos = async (req,res) => {
     try {
         const todos = await todoOperate.getTodos();
          todos.map(item => {
-            if (item.completed === 1) {
-                item.completed = true;
-            }else {
-                item.completed = false;
-            }
+            item.completed = item.completed === 1;
         })
         res.json({data:todos,code:200});
     } catch (error) {
@@ -51,8 +47,28 @@ const updateTodo = async(req,res) => {
 }
 
 // 修改事务日程
-const changeSchedule = async(req,res) => {
+const changeSchedule = async (req,res) => {
+    try {
+        const {fromId,targetId} = req.body;
+        const fromResult = await todoOperate.getItemById(fromId)
+        const targetResult = await todoOperate.getItemById(targetId)
 
+        const fromDescription = fromResult[0].description;
+        const fromLockTime = fromResult[0].locktime;
+        const targetDescription = targetResult[0].description;
+        const targetLockTime = targetResult[0].locktime;
+
+        await todoOperate.updateSchedule(fromDescription,fromLockTime,targetId)
+        await todoOperate.updateSchedule(targetDescription,targetLockTime,fromId)
+
+        const todos = await todoOperate.getTodos();
+        todos.map(item => {
+            item.completed = item.completed === 1;
+        })
+        res.status(201).json({data:todos,success:true,code:200});
+    } catch (error){
+        res.status(500).json({error: error,success: false});
+    }
 }
 
-module.exports = {getTodos,createTodo,updateTodo}
+module.exports = {getTodos,createTodo,updateTodo,changeSchedule}

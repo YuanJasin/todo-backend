@@ -12,7 +12,7 @@ router.post('/todo',todoController.createTodo)
 router.post('/todo/:id',todoController.updateTodo)
 
 /* 修改日程 */
-router.post('/schedule',)
+router.post('/schedule',todoController.changeSchedule)
 
 
 module.exports = router;
